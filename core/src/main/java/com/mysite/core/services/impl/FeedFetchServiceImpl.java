@@ -3,7 +3,6 @@ package com.mysite.core.services.impl;
 import com.mysite.core.beans.Rss;
 import com.mysite.core.models.RssFeedBean;
 import com.mysite.core.services.FeedFetchService;
-import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -30,8 +29,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component(service = FeedFetchService.class, immediate = true)
-@Designate(ocd = FeedFetchServiceImpl.FeedFetchServiceConfiguration.class) public class FeedFetchServiceImpl
-        implements FeedFetchService {
+@Designate(ocd = FeedFetchServiceImpl.FeedFetchServiceConfiguration.class)
+public class FeedFetchServiceImpl implements FeedFetchService {
 
     private static final Logger log = LoggerFactory.getLogger(FeedFetchServiceImpl.class);
 
@@ -58,16 +57,15 @@ import java.util.stream.Collectors;
      */
     private List<RssFeedBean> getFeed(String feedPath, int limit) {
         List<RssFeedBean> rssFeedBeans = new ArrayList<>();
-        if (StringUtils.isNoneBlank(feedPath) && limit > 0) {
+        if (!feedPath.isEmpty() && limit > 0) {
             log.debug("Feed path is {}", feedPath);
             log.debug("limit {}", limit);
             try {
-                Rss rss;
                 JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
                 URL feedUrl = new URL(feedPath);
                 if (Boolean.TRUE.equals(isValidFeedUrl(feedUrl))) {
-                    rss = (Rss) unmarshaller.unmarshal(feedUrl);
+                    Rss rss = (Rss) unmarshaller.unmarshal(feedUrl);
                     rss.getChannel().getItem().stream().limit(limit).collect(Collectors.toList()).forEach(item -> {
                         RssFeedBean rssFeedBean = new RssFeedBean();
                         rssFeedBean.setTitle(item.getTitle());
@@ -83,9 +81,7 @@ import java.util.stream.Collectors;
                     log.info("rssFeedBean size : {}", rssFeedBeans.size());
                     return rssFeedBeans;
                 }
-            } catch (IOException e) {
-                log.error("Error configuting feed path url : ", e);
-            } catch (JAXBException e) {
+            }  catch (JAXBException | MalformedURLException e) {
                 log.error("JAXBException at : ", e);
             }
 
@@ -105,9 +101,6 @@ import java.util.stream.Collectors;
             connection.setRequestMethod("GET");
             connection.connect();
             return connection.getResponseCode() == 200;
-        } catch (MalformedURLException e) {
-            log.error("MalformedURL : ", e);
-            return false;
         } catch (IOException e) {
             log.error("IOException : ", e);
             return false;

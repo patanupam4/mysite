@@ -11,10 +11,10 @@
     "jcr:primaryType": "nt:unstructured",
     "item0": {
       "jcr:primaryType": "nt:unstructured",
-      "description": "Description1 ",
+      "description": "Description1",
       "date": "Wed Aug 24 2022 00:00:00 GMT+0530",
       "link": "https://www.google.com",
-      "title": "Title 1 "
+      "title": "Title 1"
     },
     "item1": {
       "jcr:primaryType": "nt:unstructured",
