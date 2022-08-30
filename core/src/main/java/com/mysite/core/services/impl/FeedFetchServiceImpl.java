@@ -95,6 +95,7 @@ import java.util.stream.Collectors;
 
     /**
      * Checks if the feed URL is invalid
+     *
      * @param feedUrl
      * @return
      */
@@ -115,6 +116,7 @@ import java.util.stream.Collectors;
 
     /**
      * Formats the XML date to yyyy-MM-dd
+     *
      * @param date
      * @return
      * @throws ParseException
