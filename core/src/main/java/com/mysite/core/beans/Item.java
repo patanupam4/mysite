@@ -9,7 +9,7 @@ public class Item {
     String link;
     String title;
     String description;
-    Date publishedDate;
+    String publishedDate;
 
     public String getGuid() {
         return guid;
@@ -43,12 +43,12 @@ public class Item {
         this.description = description;
     }
 
-    @XmlElement(name="a10")
-    public Date getPublishedDate() {
+    @XmlElement(namespace = "http://www.w3.org/2005/Atom", name = "updated")
+    public String getPublishedDate() {
         return publishedDate;
     }
 
-    public void setPublishedDate(Date publishedDate) {
+    public void setPublishedDate(String publishedDate) {
         this.publishedDate = publishedDate;
     }
 }

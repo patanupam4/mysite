@@ -70,8 +70,12 @@ public class RssFeedBean {
         displayPublishedDate = publishDateFormat(date);
     }
 
-
+    /**
+     * Returns the Input date in format "yyyy-MM-dd"
+     * @param inputDate
+     * @return displayPublishedDate
+     */
     private String publishDateFormat(Date inputDate) {
-        return new SimpleDateFormat("MMMMM d, yyyy").format(inputDate);
+        return new SimpleDateFormat("yyyy-MM-dd").format(inputDate);
     }
 }

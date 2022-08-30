@@ -48,7 +48,8 @@ public class RssFeedModelImpl implements RssFeedModel {
 
     @Override public List<RssFeedBean> getFeedData() {
         if (!feedFetchService.getFeedData(feedPath, Integer.parseInt(count)).isEmpty()) {
-            return feedFetchService.getFeedData(feedPath, Integer.parseInt(count));
+            List<RssFeedBean> abc = feedFetchService.getFeedData(feedPath, Integer.parseInt(count));
+            return abc;
         } else {
             return options;
         }

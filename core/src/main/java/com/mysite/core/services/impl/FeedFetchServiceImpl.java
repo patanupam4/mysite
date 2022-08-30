@@ -21,8 +21,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,8 +52,8 @@ import java.util.stream.Collectors;
     /**
      * Gets the feed.
      *
-     * @param feedPath   the feed path
-     * @param limit      the limit
+     * @param feedPath the feed path
+     * @param limit    the limit
      * @return the feed
      */
     private List<RssFeedBean> getFeed(String feedPath, int limit) {
@@ -70,6 +73,11 @@ import java.util.stream.Collectors;
                         rssFeedBean.setTitle(item.getTitle());
                         rssFeedBean.setDescription(item.getDescription());
                         rssFeedBean.setLink(item.getLink());
+                        try {
+                            rssFeedBean.setDisplayPublishedDate(dateFormat(item.getPublishedDate()));
+                        } catch (ParseException e) {
+                            log.error("Parsing exception while String to Date at : ", e);
+                        }
                         rssFeedBeans.add(rssFeedBean);
                     });
                     log.info("rssFeedBean size : {}", rssFeedBeans.size());
@@ -85,6 +93,11 @@ import java.util.stream.Collectors;
         return rssFeedBeans;
     }
 
+    /**
+     * Checks if the feed URL is invalid
+     * @param feedUrl
+     * @return
+     */
     private Boolean isValidFeedUrl(URL feedUrl) {
         try {
             HttpURLConnection connection = (HttpURLConnection) feedUrl.openConnection();
@@ -100,6 +113,16 @@ import java.util.stream.Collectors;
         }
     }
 
+    /**
+     * Formats the XML date to yyyy-MM-dd
+     * @param date
+     * @return
+     * @throws ParseException
+     */
+    public static String dateFormat(String date) throws ParseException {
+        Date dateFormat = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        return new SimpleDateFormat("yyyy-MM-dd").format(dateFormat);
+    }
 
     /**
      * The Interface DialogRenderServiceConfiguration.
