@@ -1,0 +1,14 @@
+<sly data-sly-use.rssFeed="com.mysite.core.models.RssFeedModel" data-sly-use.template="core/wcm/components/commons/v1/templates.html" data-sly-call="${template.placeholder @ isEmpty=true, emptyTextAppend='Modernized'}"></sly>
+<div data-sly-use.rssFeed="com.mysite.core.models.RssFeedModel">
+    <div id="rssfeed" data-sly-list.item="${rssFeed.feedData}">
+        <div class="feeditem">
+            <span><p>${item.displayPublishedDate}</p></span>
+            <span><h2><a role="button" href="${item.link}">${item.title}</a></h2></span>
+            <span><p>${item.description}</p></span>
+        </div>
+    </div>
+    <sly data-sly-test="${!hasContent && wcmmode.edit}">
+        <img src="/apps/pwc/components/modernized/content/rssfeed/thumbnail.png" />
+        <span style="vertical-align: top;">Edit RSS Feed</span>
+    </sly>
+</div>

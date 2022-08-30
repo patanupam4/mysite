@@ -1,0 +1,126 @@
+package com.mysite.core.services.impl;
+
+import com.mysite.core.beans.Rss;
+import com.mysite.core.models.RssFeedBean;
+import com.mysite.core.services.FeedFetchService;
+import org.apache.commons.lang3.StringUtils;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.AttributeType;
+import org.osgi.service.metatype.annotations.Designate;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component(service = FeedFetchService.class, immediate = true)
+@Designate(ocd = FeedFetchServiceImpl.FeedFetchServiceConfiguration.class) public class FeedFetchServiceImpl
+        implements FeedFetchService {
+
+    private static final Logger log = LoggerFactory.getLogger(FeedFetchServiceImpl.class);
+
+    /**
+     * The is enabled.
+     */
+    private boolean isEnabled;
+
+    @Override public List<RssFeedBean> getFeedData(String feedPath, int limit) {
+        if (isEnabled) {
+            return getFeed(feedPath, limit);
+        } else {
+            log.debug("feed service is disabled");
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Gets the feed.
+     *
+     * @param feedPath   the feed path
+     * @param limit      the limit
+     * @return the feed
+     */
+    private List<RssFeedBean> getFeed(String feedPath, int limit) {
+        List<RssFeedBean> rssFeedBeans = new ArrayList<>();
+        if (StringUtils.isNoneBlank(feedPath) && limit > 0) {
+            log.debug("Feed path is {}", feedPath);
+            log.debug("limit {}", limit);
+            try {
+                Rss rss;
+                JAXBContext jaxbContext = JAXBContext.newInstance(Rss.class);
+                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+                URL feedUrl = new URL(feedPath);
+                if (Boolean.TRUE.equals(isValidFeedUrl(feedUrl))) {
+                    rss = (Rss) unmarshaller.unmarshal(feedUrl);
+                    rss.getChannel().getItem().stream().limit(limit).collect(Collectors.toList()).forEach(item -> {
+                        RssFeedBean rssFeedBean = new RssFeedBean();
+                        rssFeedBean.setTitle(item.getTitle());
+                        rssFeedBean.setDescription(item.getDescription());
+                        rssFeedBean.setLink(item.getLink());
+                        rssFeedBeans.add(rssFeedBean);
+                    });
+                    log.info("rssFeedBean size : {}", rssFeedBeans.size());
+                    return rssFeedBeans;
+                }
+            } catch (IOException e) {
+                log.error("Error configuting feed path url : ", e);
+            } catch (JAXBException e) {
+                log.error("JAXBException at : ", e);
+            }
+
+        }
+        return rssFeedBeans;
+    }
+
+    private Boolean isValidFeedUrl(URL feedUrl) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) feedUrl.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            return connection.getResponseCode() == 200;
+        } catch (MalformedURLException e) {
+            log.error("MalformedURL : ", e);
+            return false;
+        } catch (IOException e) {
+            log.error("IOException : ", e);
+            return false;
+        }
+    }
+
+
+    /**
+     * The Interface DialogRenderServiceConfiguration.
+     */
+    @ObjectClassDefinition(name = "FeedFetchServiceConfiguration", description = "PWC configuration for rendering rss feed")
+    public @interface FeedFetchServiceConfiguration {
+
+        /**
+         * Checks if is enabled.
+         *
+         * @return true, if is enabled
+         */
+        @AttributeDefinition(name = "Enable Fetch Service", description = "Enable/Disable Feed Fetch Service", type = AttributeType.BOOLEAN) public boolean isEnabled() default true;
+    }
+
+    /**
+     * Activate.
+     *
+     * @param config the config
+     */
+    @Activate @Modified protected void activate(final FeedFetchServiceConfiguration config) {
+        this.isEnabled = config.isEnabled();
+    }
+}
