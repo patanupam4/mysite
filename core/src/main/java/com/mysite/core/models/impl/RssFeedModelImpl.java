@@ -29,6 +29,7 @@ public class RssFeedModelImpl implements RssFeedModel {
     public static final String RESOURCE_TYPE = "mysite/components/content/rssfeed";
 
     public RssFeedModelImpl() {
+        /* Kept empty intentionally to avoid Sonar Code smell*/
     }
 
     @Override public String getExportedType() {

@@ -12,6 +12,7 @@ http://localhost:4502/content/mysite/us/en/rss-test.html?wcmmode=disabled
 * Junit has been covered - 80% + 
 * Tested with Feed - https://sports.ndtv.com/rss/cricket & https://sports.ndtv.com/rss/football
 * From the Manual field in case date is not provided, the _**fallback is current date**_
+* Default Sonar check has been done on Custom code
 
 ## Modules
 

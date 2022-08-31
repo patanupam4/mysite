@@ -1,7 +1,6 @@
 package com.mysite.core.beans;
 
 import javax.xml.bind.annotation.XmlElement;
-import java.util.Date;
 
 public class Item {
 
