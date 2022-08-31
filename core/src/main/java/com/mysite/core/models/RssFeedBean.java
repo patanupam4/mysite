@@ -65,9 +65,16 @@ public class RssFeedBean {
         this.displayPublishedDate = displayPublishedDate;
     }
 
+    /**
+     * In case Date is null, it falls back to current date
+     */
     @PostConstruct
     protected void initModel() {
-        displayPublishedDate = publishDateFormat(date);
+        if (null != date) {
+            displayPublishedDate = publishDateFormat(date);
+        } else {
+            displayPublishedDate = publishDateFormat(new Date());
+        }
     }
 
     /**
