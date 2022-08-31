@@ -16,6 +16,7 @@ import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Model(adaptables = { SlingHttpServletRequest.class, Resource.class }, adapters = { RssFeedModel.class,
         ComponentExporter.class }, resourceType = {
@@ -26,6 +27,9 @@ public class RssFeedModelImpl implements RssFeedModel {
     @OSGiService private FeedFetchService feedFetchService;
 
     public static final String RESOURCE_TYPE = "mysite/components/content/rssfeed";
+
+    public RssFeedModelImpl() {
+    }
 
     @Override public String getExportedType() {
         return RESOURCE_TYPE;
@@ -50,7 +54,7 @@ public class RssFeedModelImpl implements RssFeedModel {
         if (!feedFetchService.getFeedData(feedPath, Integer.parseInt(count)).isEmpty()) {
             return feedFetchService.getFeedData(feedPath, Integer.parseInt(count));
         } else {
-            return options;
+            return options.stream().limit(Integer.parseInt(count)).collect(Collectors.toList());
         }
     }
 }

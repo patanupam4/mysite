@@ -2,6 +2,17 @@
 
 This is a project template for AEM-based applications. It is intended as a best-practice set of examples as well as a potential starting point to develop your own functionality.
 
+#RSS Feed
+
+http://localhost:4502/content/mysite/us/en/rss-test.html?wcmmode=disabled
+
+* The **RSS Feed Page** is part of the project (_/content/mysite/us/en/rss-test_) and has been created using the OOTB We Retail Website.
+* The Manual fallback content is also authored (Dummy Content) if Rss Feed URL is invalid, more data can be added to the Multi field on the component 
+* Number of items needed to be displayed in the component is configurable 
+* Junit has been covered - 80% + 
+* Tested with Feed - https://sports.ndtv.com/rss/cricket & https://sports.ndtv.com/rss/football
+* From the Manual field in case date is not provided, the _**fallback is current date**_
+
 ## Modules
 
 The main parts of the template are:
@@ -14,7 +25,6 @@ The main parts of the template are:
 * ui.frontend: an optional dedicated front-end build mechanism (Angular, React or general Webpack project)
 * ui.tests: Selenium based UI tests
 * all: a single content package that embeds all of the compiled modules (bundles and content packages) including any vendor dependencies
-* analyse: this module runs analysis on the project which provides additional validation for deploying into AEMaaCS
 
 ## How to build
 
